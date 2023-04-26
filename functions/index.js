@@ -79,13 +79,13 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
   const pressure = data.pressure;
   const o2 = data.o2;
   const sugar = data.sugar;
-  const uid = data.uid;
+  const userId = data.userId;
   
    
   
-    console.log('uid:' + uid);
-    if(!uid){
-      throw new functions.https.HttpsError('invalid-argument', 'Invalid data; uid ' + uid);
+    console.log('userId:' + userId);
+    if(!userId){
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid data; userId ' + userId);
     }
     if(!bpm){
       throw new functions.https.HttpsError('invalid-argument', 'Invalid data; bpm ' + bpm);
@@ -100,7 +100,7 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError('invalid-argument', 'Invalid data; sugar ' + sugar);
     }
   
-    //Create a doc with 6 fields: bpm, pressure, o2, sugar, timestamp and uid of user
+    //Create a doc with 6 fields: bpm, pressure, o2, sugar, timestamp and userId of user
 
     try {
       const docRef = db.collection('metrics2').doc();
@@ -113,7 +113,7 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
           o2: o2,
           sugar: sugar,
           timestamp: timestamp,
-          uid: uid,
+          userId: userId,
         });
       } else {
         await docRef.set({
@@ -122,7 +122,7 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
           o2: o2,
           sugar: sugar,
           timestamp: timestamp,
-          uid: uid,
+          userId: userId,
         });
       }
       return {
