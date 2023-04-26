@@ -15,7 +15,7 @@ const db = admin.firestore();
 
 exports.saveMetrics = functions.https.onCall(async (data, context) => {
   const { bpm, pressure, o2, sugar } = data;
-  const uid = context.auth.uid;
+  const uid = "ROIUSmnpNCn0xGKdOuhu";//context.auth.uid;
   
   if (
     typeof bpm !== 'number' || 
@@ -28,14 +28,14 @@ exports.saveMetrics = functions.https.onCall(async (data, context) => {
   try {
     const docRef = db.collection('users').doc(uid);
     const userDoc = await docRef.get();
-    const username = userDoc.exists ? userDoc.data().displayName : 'unknown';
+    //const username = userDoc.exists ? userDoc.data.displayName : 'unknown';
 
     const newEntry = {
       bpm, 
       pressure, 
       o2, 
       sugar,
-      createdBy: username,
+      //createdBy: username,
       createdAt: admin.firestore.Timestamp.now(),
     };
 
@@ -49,3 +49,57 @@ exports.saveMetrics = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('internal', 'Ha ocurrido un error al guardar los números');
   }
 });
+
+exports.createUserDoc = functions.https.onCall(async (data, context) => {
+    const uid = data.uid;
+    const name = data.name;
+    const surname = data.surname;
+    const email = data.email;
+
+    console.debug('data'+data);
+    console.debug('uid'+data.uid);
+    console.debug('name'+data.name);
+    console.debug('surname'+data.surname);
+    console.debug('email'+data.email);
+
+
+    if(!uid){
+        throw new functions.https.HttpsError('invalid-argument', 'Invalid data; uid ' + uid);
+    }
+    if(!name){
+        throw new functions.https.HttpsError('invalid-argument', 'Invalid data; name ' + name);
+    }
+    if(!surname){
+        throw new functions.https.HttpsError('invalid-argument', 'Invalid data; surname ' + surname);
+    }
+    if(!email){
+        throw new functions.https.HttpsError('invalid-argument', 'Invalid data; email ' + email);
+    }
+
+    //try get 'users' collection, if it doesn't exist, it will be created
+    //then add a document with the uid as the document id
+    try {
+        const docRef = db.collection('users').doc(uid);
+        const userDoc = await docRef.get();
+        if (!userDoc.exists) {
+            await docRef.set({
+                name: name,
+                surname: surname,
+                email: email,
+                createdAt: admin.firestore.Timestamp.now(),
+            });
+        }
+        return {
+            message: 'User document created successfully',
+        };
+    }
+    catch (error) {
+        console.error(error);
+        throw new functions.https.HttpsError('internal', 'Error creating user document');
+    }
+
+    
+});
+
+
+  
