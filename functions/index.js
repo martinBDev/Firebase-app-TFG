@@ -13,79 +13,19 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
-exports.saveMetrics = functions.https.onCall(async (data, context) => {
-const bpm = data.bpm;
-const pressure = data.pressure;
-const o2 = data.o2;
-const sugar = data.sugar;
-const uid = data.uid;
 
- 
-
-  console.log('uid:' + uid);
-  if(!uid){
-    throw new functions.https.HttpsError('invalid-argument', 'Invalid data; uid ' + uid);
-  }
-  if(!bpm){
-    throw new functions.https.HttpsError('invalid-argument', 'Invalid data; bpm ' + bpm);
-  }
-  if(!pressure){
-    throw new functions.https.HttpsError('invalid-argument', 'Invalid data; pressure ' + pressure);
-  }
-  if(!o2){
-    throw new functions.https.HttpsError('invalid-argument', 'Invalid data; o2 ' + o2);
-  }
-  if(!sugar){
-    throw new functions.https.HttpsError('invalid-argument', 'Invalid data; sugar ' + sugar);
-  }
-
-  //try get 'metrics' collection, if it doesn't exist, it will be created
-  //if document with uid exists, add to each array a new value of bpm, pressure, o2 and sugar respectively
-  //if document with uid doesn't exist, create it and add to each array a new value of bpm, pressure, o2 and sugar respectively
-
-  try {
-    const docRef = db.collection('metrics').doc(uid);
-    const metricsDoc = await docRef.get();
-    const timestamp = admin.firestore.Timestamp.now();
-    if (metricsDoc.exists) {
-      await docRef.update({
-        bpm: admin.firestore.FieldValue.arrayUnion(bpm),
-        pressure: admin.firestore.FieldValue.arrayUnion(pressure),
-        o2: admin.firestore.FieldValue.arrayUnion(o2),
-        sugar: admin.firestore.FieldValue.arrayUnion(sugar),
-        timestamp: admin.firestore.FieldValue.arrayUnion(timestamp),
-      });
-    } else {
-      await docRef.set({
-        bpm: [bpm],
-        pressure: [pressure],
-        o2: [o2],
-        sugar: [sugar],
-        timestamp: [timestamp],
-      });
-    }
-    return {
-      message: 'Metrics saved successfully',
-    };
-  }catch (error) {
-    console.error(error);
-    throw new functions.https.HttpsError('internal', 'Error saving metrics');
-  }
-
-});
-
-exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
+exports.saveMetrics = functions.region('europe-west3').https.onCall(async (data, context) => {
   const bpm = data.bpm;
   const pressure = data.pressure;
   const o2 = data.o2;
   const sugar = data.sugar;
-  const userId = data.userId;
+  const ownerUID = data.ownerUID;
   
    
   
-    console.log('userId:' + userId);
-    if(!userId){
-      throw new functions.https.HttpsError('invalid-argument', 'Invalid data; userId ' + userId);
+    console.log('ownerUID:' + ownerUID);
+    if(!ownerUID){
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid data; ownerUID ' + ownerUID);
     }
     if(!bpm){
       throw new functions.https.HttpsError('invalid-argument', 'Invalid data; bpm ' + bpm);
@@ -100,10 +40,10 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError('invalid-argument', 'Invalid data; sugar ' + sugar);
     }
   
-    //Create a doc with 6 fields: bpm, pressure, o2, sugar, timestamp and userId of user
+    //Create a doc with 6 fields: bpm, pressure, o2, sugar, timestamp and ownerUID of user
 
     try {
-      const docRef = db.collection('metrics2').doc();
+      const docRef = db.collection('metrics').doc();
       const metricsDoc = await docRef.get();
       const timestamp = admin.firestore.Timestamp.now();
       if (metricsDoc.exists) {
@@ -113,7 +53,7 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
           o2: o2,
           sugar: sugar,
           timestamp: timestamp,
-          userId: userId,
+          ownerUID: ownerUID,
         });
       } else {
         await docRef.set({
@@ -122,7 +62,7 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
           o2: o2,
           sugar: sugar,
           timestamp: timestamp,
-          userId: userId,
+          ownerUID: ownerUID,
         });
       }
       return {
@@ -138,7 +78,7 @@ exports.saveMetricsOneByOne = functions.https.onCall(async (data, context) => {
 
 //create a new user document in the 'users' collection when a user signs up
 //this function is triggered by the 'onCreate' event
-exports.createUserDoc = functions.https.onCall(async (data, context) => {
+exports.createUserDoc = functions.region('europe-west3').https.onCall(async (data, context) => {
     const uid = data.uid;
     const name = data.name;
     const surname = data.surname;
