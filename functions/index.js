@@ -1,6 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require('firebase-admin');
-const { GeoFirestore } = require('geofirestore');
+const { geofirestore  } = require('geofirestore');
 const {
   geohashForLocation,
 } = require("geofire-common");
@@ -129,7 +129,7 @@ exports.findNearestLocation = functions.region('europe-west3').https.onCall(asyn
 
   currentGeoPoint = new admin.firestore.GeoPoint(currentLatitude, currentLongitude);
 
-  const geocollection = geofirestore.collection('centers');
+  const geocollection = geofirestore .collection('centers');
 
   //Read docs from 'centers' collection
   try {
@@ -181,7 +181,7 @@ exports.createGeoHash = functions.firestore
     //Add field to documento
     const location = snap.data().location;
     const hash = geohashForLocation([location.latitude, location.longitude]);
-    
+
       
       return snap.ref.set({
         geohash: hash
