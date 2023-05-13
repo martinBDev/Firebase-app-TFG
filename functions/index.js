@@ -24,7 +24,14 @@ exports.saveMetrics = functions.region('europe-west3').https.onCall(async (data,
    
     //Check all values are not null or undefined
     checkValue('ownerUID', ownerUID);
+    checkValue('user uid', context.auth.uid);
+
+    if(ownerUID != context.auth.uid){
+        throw new functions.https.HttpsError('permission-denied', 'User uid does not match');
+    }
+
     checkValue('bpm', bpm);
+
     checkValue('pressure', pressure);
     checkValue('o2', o2);
     checkValue('sugar', sugar);
@@ -86,6 +93,12 @@ exports.createUserDoc = functions.region('europe-west3').https.onCall(async (dat
 
     //check all values are not null or undefined
     checkValue('uid', uid);
+    checkValue('user uid', context.auth.uid);
+
+    if(uid != context.auth.uid){
+        throw new functions.https.HttpsError('permission-denied', 'User uid does not match');
+    }
+
     checkValue('name', name);
     checkValue('surname', surname);
     checkValue('email', email);
