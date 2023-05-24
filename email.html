@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reporte de salud</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .alert {
+      text-align: center;
+      font-weight: bold;
+    }
+    .card-container {
+  display: flex;
+  flex-direction: column; /* Cambiar a columna para apilar verticalmente */
+  align-items: center; /* Centrar las tarjetas verticalmente */
+  margin-left: 3em;
+}
+
+.card {
+  border: 0.0625em solid white;
+  border-radius: 0.9375em;
+  background: linear-gradient(to right, red, purple);
+  width: 30em; /* Haz las tarjetas más largas */
+  height: 3.5em; /* Y menos altas */
+  margin: 0.625em;
+  padding: 0.625em;
+  display: flex;
+  flex-direction: row; /* Cambiar a fila para alinear horizontalmente */
+  justify-content: flex-start; /* Alinea el contenido a la izquierda */
+  align-items: center; /* Centrar el contenido verticalmente */
+}
+
+.card img {
+  width: 4em; /* Ajustar el tamaño de la imagen */
+  height: 4em; /* Ajustar el tamaño de la imagen */
+  margin-right: 2em; /* Aumentar margen a la derecha de la imagen */
+}
+
+.card h3, .card p {
+  margin: 0;
+  text-align: left; /* Alinear el texto a la izquierda */
+}
+
+    .user-info {
+      background-color: lightblue;
+      padding: 0.625em;
+      border-radius: 0.9375em;
+      border:  0.125em solid lightgray;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.25em;
+      color: black;
+    }
+    .user-img {
+      width: 6.25em;
+      height: 6.25em;
+      margin-right: 0.625em;
+    }
+
+    .location {
+        display: flex;
+      align-items: center;
+      margin-top: -0.6em;
+    }
+
+    .maps-icon {
+      width: 1.25em;
+      height: 1.25em;
+      margin-right: 0.625em;
+    }
+
+    /* CSS existente... */
+
+/* Añadir al final del archivo CSS: */
+
+@media only screen and (max-width: 600px) {
+  .card-container {
+    margin-left: 1em; /* Reducir el margen izquierdo */
+  }
+
+  .card {
+    width: 20em; /* Reducir el ancho de las tarjetas */
+    height: auto; /* Permitir que las tarjetas tengan altura automática */
+    flex-direction: column; /* Cambiar a columna para alinear verticalmente */
+  }
+
+  .card img {
+    width: 3em; /* Reducir el tamaño de la imagen */
+    height: 3em; /* Reducir el tamaño de la imagen */
+    margin-right: 0; /* Remover margen a la derecha de la imagen */
+    margin-bottom: 1em; /* Añadir margen abajo de la imagen */
+  }
+
+  .user-img {
+    width: 5em; /* Reducir el tamaño de la imagen de usuario */
+    height: 5em; /* Reducir el tamaño de la imagen de usuario */
+  }
+
+  .maps-icon {
+    width: 1em; /* Reducir el tamaño del icono de mapas */
+    height: 1em; /* Reducir el tamaño del icono de mapas */
+  }
+}
+
+
+  </style>
+</head>
+<body>
+  <h1 class="alert">⚠️ Alerta ⚠️</h1>
+  <br>
+  
+  <div class="user-info">
+    <img class="user-img" src="https://cdn-icons-png.flaticon.com/512/4305/4305692.png" alt="Foto de perfil">
+    <div>
+      <p>Nombre: {{nombre_usuario}}</p>
+      <p>ID de Usuario: {{id_usuario}}</p>
+      <p>Número de teléfono: {{numero_telefono}}</p>
+      <p>Fecha y hora de la medición: {{timestamp_medicion}}</p>
+      <div class="location">
+        <img class="maps-icon" src="https://cdn-icons-png.flaticon.com/256/854/854929.png" alt="Foto de perfil">
+        <p> <a href="https://maps.google.com/?q={{lat}},{{long}}">Haz clic aquí para ver la localización actual</a></p>
+       </div>
+    </div>
+<br>
+    <div class="card-container">
+        <div class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/2906/2906533.png" alt="Pulsaciones">
+          <h3>Pulsaciones: </h3>
+          <p>{{bpm}} PPM</p>
+        </div>
+        <div class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/3819/3819557.png" alt="Nivel de oxígeno">
+          <h3>Nivel de oxígeno: </h3>
+          <p>{{o2level}} %</p>
+        </div>
+        <div class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/4751/4751278.png" alt="Presión sanguínea">
+          <h3>Presión sanguínea: </h3>
+          <p>{{pressure}} mmHg</p>
+        </div>
+        <div class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/8730/8730535.png" alt="Azúcar en sangre">
+          <h3>Azúcar en sangre: </h3>
+          <p>{{sugar}} mg/dl</p>
+        </div>
+  </div>
+
+  
+
+</body>
+</html>
