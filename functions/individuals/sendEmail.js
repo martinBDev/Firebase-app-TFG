@@ -11,6 +11,8 @@ exports.sendEmail = functions.region('europe-west3').https.onCall(async (data, c
     const sugar = data.sugar;
     const location = data.location;
     const nearestCenter = data.nearestCenter;
+
+    console.log(data);
   
     //Check all values are not null or undefined
     checkValue('user uid', userUID);
