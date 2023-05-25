@@ -25,7 +25,7 @@ exports.sendEmail = functions.region('europe-west3').https.onCall(async (data, c
   
   
     //get user document
-    const centerDoc = await db.collection('centers').doc("pJZ1KDkQHJmEE52w05FU").get();
+    const centerDoc = await db.collection('centers').doc(nearestCenter).get();
     const nearestCenterEmail = centerDoc.data().email;
 
     const userDoc = await db.collection('users').doc(userUID).get();
