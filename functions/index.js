@@ -22,12 +22,15 @@ exports.createGeoHash = functions.firestore
   .onCreate((snap, context) => {
     
     //Add field to documento
-    const location = snap.data().location;
+    const location = change.after.data().pos.geopoint;
     const hash = geohashForLocation([location.latitude, location.longitude]);
 
       
       return snap.ref.set({
-        geohash: hash
+        pos: {
+          geohash: hash,
+          geopoint: location
+        }
       }, {merge: true});
   });
 
@@ -36,14 +39,17 @@ exports.updateGeoHash = functions.firestore
   .document('centers/{centerId}')
   .onUpdate((change, context) => {
     
-    const location = change.after.data().location;
+    const location = change.after.data().pos.geopoint;
     
     const hash = geohashForLocation([location.latitude, location.longitude]);
 
 
     //Add field to document
     return change.after.ref.set({
-      geohash: hash
+      pos: {
+        geohash: hash,
+        geopoint: location
+      }
     }, {merge: true});
 
   });

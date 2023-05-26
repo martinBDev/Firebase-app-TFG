@@ -1,11 +1,8 @@
 
 const functions = require('firebase-functions');
 const { admin, db } = require('../firebase');
-const { geofirestore  } = require('geofirestore');
-const {
-    GeoFirestoreUtils,
-    } = require("geofire-common");
 
+const geo = require('geofirex').init(admin);
 
 
 //FUNCTION 3
@@ -17,42 +14,28 @@ const findNearestLocation = functions.region('europe-west3').https.onCall(async 
     checkValue('latitude', currentLatitude);
     checkValue('longitude', currentLongitude);
   
-    currentGeoPoint = new admin.firestore.GeoPoint(currentLatitude, currentLongitude);
+    currentGeoPoint = geo.point(currentLatitude, currentLongitude);
+    const centersCollection = db.collection('centers');
   
-    const geocollection = geofirestore .collection('centers');
-  
-    //Read docs from 'centers' collection
-    try {
-  
-      const snapshot = await geocollection.get();
-      const locations = snapshot.docs.map(doc => ({
-        id: doc.id,
-        data: doc.data(),
-      }));
-  
-      let nearestLocation = null;
-      let nearestDistance = Number.MAX_VALUE;
-   
-      locations.forEach(location => {
-        const distance = GeoFirestoreUtils.distanceBetween(
-          [location.data.coordinates.latitude, location.data.coordinates.longitude],
-          [center.latitude, center.longitude]
-        );
-    
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestLocation = location;
-        }
-      });
-  
-      //Return the nearest center
-      return {
-        center: nearestLocation,
-      };
-    } catch (error) {
-      console.error(error);
-      throw new functions.https.HttpsError('internal', 'Error searching nearest center');
+    const kilometersRadius = 10; //10km
+    var foundResults = false;
+
+    //Concentric searches until a center is found
+    while(!foundResults){ 
+      
+      const centerQuery = geo.query(centersCollection).within(currentGeoPoint, kilometersRadius, 'pos');
+      const centerQueryResults = await centerQuery.get();
+      if(centerQueryResults.docs.length > 0){
+        foundResults = true;
+        //Sorted from nearest to farthest
+        return centerQueryResults.docs[0].data();
+      }
+      kilometersRadius += 10;
+
     }
+
+    return null;
+
    
   });
 
