@@ -1,8 +1,9 @@
 
 const functions = require('firebase-functions');
 const { admin, db } = require('../firebase');
-
+const { checkValue } = require('./utils');
 const geo = require('geofirex').init(admin);
+const { get } = require('geofirex');
 
 
 //FUNCTION 3
@@ -17,22 +18,22 @@ const findNearestLocation = functions.region('europe-west3').https.onCall(async 
     currentGeoPoint = geo.point(currentLatitude, currentLongitude);
     const centersCollection = db.collection('centers');
   
-    const kilometersRadius = 10; //10km
-    var foundResults = false;
+    var kilometersRadius = 200; //200km
 
-    //Concentric searches until a center is found
-    while(!foundResults){ 
+
+    const centerQuery = geo.query(centersCollection).within(currentGeoPoint, kilometersRadius, 'pos');
+    const centerQueryResults = await get(centerQuery);
+    console.log(centerQueryResults)
+    if(centerQueryResults.length > 0){
       
-      const centerQuery = geo.query(centersCollection).within(currentGeoPoint, kilometersRadius, 'pos');
-      const centerQueryResults = await centerQuery.get();
-      if(centerQueryResults.docs.length > 0){
-        foundResults = true;
-        //Sorted from nearest to farthest
-        return centerQueryResults.docs[0].data();
-      }
-      kilometersRadius += 10;
-
+      //Sorted from nearest to farthest
+      console.info("FOUND");
+      console.log(centerQueryResults)
+      return centerQueryResults[0];
     }
+    kilometersRadius += 10;
+
+    
 
     return null;
 

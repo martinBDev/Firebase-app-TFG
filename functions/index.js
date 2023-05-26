@@ -22,16 +22,16 @@ exports.createGeoHash = functions.firestore
   .onCreate((snap, context) => {
     
     //Add field to documento
-    const location = change.after.data().pos.geopoint;
+    const location = snap.data().pos.geopoint;
     const hash = geohashForLocation([location.latitude, location.longitude]);
 
       
-      return snap.ref.set({
-        pos: {
-          geohash: hash,
-          geopoint: location
-        }
-      }, {merge: true});
+    return snap.ref.set({
+      pos: {
+        geohash: hash,
+        geopoint: location
+      }
+    }, {merge: true});
   });
 
 //FUNCTION 5
