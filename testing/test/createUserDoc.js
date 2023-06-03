@@ -3,7 +3,7 @@
 
 const {app} = require('./utils.js');
 const { getFunctions, httpsCallable } = require("firebase/functions");
-const { getFirestore, collection, getDocs } = require('firebase/firestore/lite');
+const { getFirestore, collection, getDocs, query, where , deleteDoc} = require('firebase/firestore/lite');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser, signOut } = require("firebase/auth");
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -23,6 +23,7 @@ const sendEmail = httpsCallable(functions, 'sendEmail-sendEmail');
 const saveMetris = httpsCallable(functions, 'saveMetrics');
 
 var assert = require('assert');
+const { log } = require('console');
 describe('createUserDoc', function() {
 
   var uid = "";
@@ -44,18 +45,19 @@ describe('createUserDoc', function() {
         'surname' : "surname",
         'phone' : "123456789",
       })
-      .then((result) => {
+      .then((result) => async function() {
         // Read result of the Cloud Function.
         const message = result.data.message;
        
         print(message);
-        assert.equal('User document created successfully', message);
-
-       
+        
 
         //delete created user document
-        db.collection('users').doc(uid).delete();
-        
+        //Make query looking for name "test"
+        const docRef = await db.collection('users').doc(uid);
+        const userDoc = await docRef.get();
+        deleteDoc(userDoc);
+        assert.equal('User document created successfully', message);
          
 
       }).catch((error) => {
