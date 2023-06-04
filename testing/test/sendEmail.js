@@ -28,7 +28,7 @@ describe('sendEmail', function() {
   it('Se le pasan todos los parámetros, dueño es el invocador, hay centro cercano.', function(done) {
 
        sendEmail({
-            'nearestCenter': "7eHlSgetxzhQBKESZuEM",
+            'nearestCenter': "6FyF900bSoFPQApV5WOT",
             'location' : {
                 'latitude' : 40.71427,
                 'longitude' : -74.00597,
@@ -37,13 +37,17 @@ describe('sendEmail', function() {
             "o2" : 50,
             "pressure" : 50,
             "sugar" : 50
+        }).then((result) => {
+             //The function returns nothing, so if it doesn't throw an error, it means it has passed
+        assert.equal(true, true);
+
+        done();
+
         }).catch((error) => {
             done(error);
         });
 
-        //The function returns nothing, so if it doesn't throw an error, it means it has passed
-        assert.equal(true, true);
-
+       
     });
 
 

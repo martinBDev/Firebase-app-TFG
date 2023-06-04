@@ -92,7 +92,7 @@ it('UID de invocador diferente al pasado por parámetro', function(done) {
         "o2" : 50,
         "pressure" : 50,
         "sugar" : 50,
-        "ownerUID" : "otheUID",
+        "ownerUID" : "otherUID",
         'location' : {
             'latitude' : 40.71427,
             'longitude' : -74.00597,
