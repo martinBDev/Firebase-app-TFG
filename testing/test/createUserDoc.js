@@ -3,7 +3,7 @@
 
 const {app} = require('./utils.js');
 const { getFunctions, httpsCallable } = require("firebase/functions");
-const { getFirestore, collection, getDocs, query, where , deleteDoc} = require('firebase/firestore/lite');
+const { getFirestore, collection, getDocs, query, where , deleteDoc, doc} = require('firebase/firestore/lite');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser, signOut } = require("firebase/auth");
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -18,9 +18,7 @@ const db = getFirestore(app);
 
 
 const createUserDoc = httpsCallable(functions, 'createUserDoc-createUserDoc');
-const findNearCenter = httpsCallable(functions, 'findNearestLocation-findNearestLocation');
-const sendEmail = httpsCallable(functions, 'sendEmail-sendEmail');
-const saveMetris = httpsCallable(functions, 'saveMetrics');
+
 
 var assert = require('assert');
 const { log } = require('console');
@@ -34,39 +32,35 @@ describe('createUserDoc', function() {
     uid = await getAuth().currentUser.uid;
   });
 
-    it('Se le pasan todos los parámetros.', async function() {
-      
-      
-     
-      createUserDoc({
-        'uid': uid,
-        'name' : "test",
-        'email' : "email",
-        'surname' : "surname",
-        'phone' : "123456789",
-      })
-      .then((result) => async function() {
+  it('Se le pasan todos los parámetros.',  function() {
+    createUserDoc({
+      'uid': uid,
+      'name' : "test",
+      'email' : "email",
+      'surname' : "surname",
+      'phone' : "123456789",
+    })
+    .then( async (result) => {
+      // Invoca la función asíncrona inmediatamente
+  
         // Read result of the Cloud Function.
         const message = result.data.message;
-       
-        print(message);
-        
 
         //delete created user document
         //Make query looking for name "test"
-        const docRef = await db.collection('users').doc(uid);
-        const userDoc = await docRef.get();
-        deleteDoc(userDoc);
-        assert.equal('User document created successfully', message);
-         
-
-      }).catch((error) => {
-        print(error);
-        assert.equal(false , true);
-      });
-
+        const docRef = doc(db, "users/"+uid);
       
+        await deleteDoc(docRef);  // Aquí debes pasar la referencia del documento, no el documento en sí
+        assert.equal('User document created successfully', message);
+
+        done();
+
+    
+    }).catch(async (error) => {
+      assert.equal(false , true);
+      done(error);
     });
+  });
 
     it('Se le pasa UID vacio', async function() {
 
@@ -77,13 +71,15 @@ describe('createUserDoc', function() {
         'surname' : "surname",
         'phone' : "123456789",
       })
-      .then((result) => {
+      .then(async (result) => {
         // Read result of the Cloud Function.
         assert.equal(false , true);
+        done(result);
 
-      }).catch((error) => {
+      }).catch(async (error) => {
         //El test pasa
         assert.equal(true , true);
+        done();
       });
 
 
@@ -99,13 +95,15 @@ describe('createUserDoc', function() {
         'surname' : "surname",
         'phone' : "123456789",
       })
-      .then((result) => {
+      .then(async (result) => {
         // Read result of the Cloud Function.
         assert.equal(false , true);
+        done(result);
 
-      }).catch((error) => {
+      }).catch(async(error) => {
         //El test pasa
         assert.equal(true , true);
+        done();
       });
 
     });
@@ -119,13 +117,15 @@ describe('createUserDoc', function() {
         'surname' : "surname",
         'phone' : "123456789",
       })
-      .then((result) => {
+      .then(async(result) => {
         // Read result of the Cloud Function.
         assert.equal(false , true);
+        done(result);
 
-      }).catch((error) => {
+      }).catch(async(error) => {
         //El test pasa
         assert.equal(true , true);
+        done();
       });
 
 
@@ -140,13 +140,15 @@ describe('createUserDoc', function() {
         'surname' : "surname",
         'phone' : "",
       })
-      .then((result) => {
+      .then(async(result) => {
         // Read result of the Cloud Function.
         assert.equal(false , true);
+        done(result);
 
-      }).catch((error) => {
+      }).catch(async(error) => {
         //El test pasa
         assert.equal(true , true);
+        done();
       });
 
     });
