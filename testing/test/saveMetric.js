@@ -59,7 +59,7 @@ describe('saveMetrics', function() {
 
 
   
-it('No se passa alguna métrica.', function(done) {
+it('No se pasa alguna métrica.', function(done) {
 
     saveMetrics({
         "sugar" : 50,
@@ -70,13 +70,11 @@ it('No se passa alguna métrica.', function(done) {
         }
     }).then((result) => {
       
-        assert.equal(false, true);
         
         done(result);
 
 
     }).catch((error) => {
-        //Done without parameters means that the test has passed
         done();
     });
  

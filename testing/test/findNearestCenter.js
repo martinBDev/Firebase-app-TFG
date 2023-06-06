@@ -50,7 +50,6 @@ describe('findNearestCenter', function() {
 
 
         }).catch((error) => {
-            assert.equal(false, true);
             done(error);
         });
      

@@ -46,11 +46,7 @@ describe('createUserDoc', function() {
         // Read result of the Cloud Function.
         const message = result.data.message;
 
-        //delete created user document
-        //Make query looking for name "test"
-        const docRef = doc(db, "users/"+uid);
-      
-        await deleteDoc(docRef);  // Aquí debes pasar la referencia del documento, no el documento en sí
+         // Aquí debes pasar la referencia del documento, no el documento en sí
         assert.equal('User document created successfully', message);
 
         done();
